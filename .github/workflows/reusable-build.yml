@@ -1,1 +1,24 @@
 
+name: Reusable Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print application name
+        run: echo "Building application ${{ inputs.app_name }}"
+
+      - name: Run build
+        run: echo "Build completed successfully"
