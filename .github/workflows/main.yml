@@ -1,4 +1,4 @@
-name: Main Workflow
+name: CI Pipeline
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
 
 jobs:
 
-  call-docker-workflow:
+  build-and-push:
 
     uses: manojkolagana25/github-reusable-workflow-demo/.github/workflows/docker-build.yml@main
 
     with:
-      image_name: demo-python-app
+      image_name: manojkolagana25/demo-python-app:latest
