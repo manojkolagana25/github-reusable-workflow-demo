@@ -1,0 +1,46 @@
+A
+
+we were using Bitnami Airflow in both production and non-production environments. Over time, the team decided to migrate to Apache Airflow to gain better control, customization, and long-term maintainability aligned with GitOps practices.
+
+We were running Airflow on a Kubernetes cluster managed by Rancher, and deployments were handled through GitHub for CI and FluxCD for CD. Instead of creating everything from scratch, I worked within the existing Kubernetes folder structure, which included deployment, service, and kustomization files.
+
+I first analyzed the Bitnami setup to understand how components like the webserver, scheduler, workers, PostgreSQL, and Redis were configured. Then I replaced Bitnami images with official Apache Airflow images, updated environment variables, executor configuration, and ensured compatibility with Celery Executor.
+
+We modified ConfigMaps and Secrets for database credentials, Fernet key, and other sensitive values, using Kubernetes secrets and sealed secrets. I also updated the kustomization files so FluxCD could reconcile the changes automatically through GitOps.
+
+During the migration, we faced challenges such as configuration differences between Bitnami and Apache, worker-scheduler communication issues, and secret handling. These were resolved by proper config mapping, Redis tuning, and validating logs through Airflow UI and Kubernetes.
+
+After deployment, we validated DAG execution, monitored the system using Airflow UI, Prometheus, and Grafana, and ensured stability in the non-production environment before promoting the changes further.
+
+This migration improved scalability, visibility, and operational control, and aligned Airflow deployments with enterprise-grade Kubernetes and GitOps standards.”
+
+Apache Airflow is an open-source workflow orchestration tool.
+simple words
+Airflow helps you schedule, run, and monitor jobs in the correct order
+
+DAG (Directed Acyclic Graph)
+
+A workflow Written in Python
+Defines tasks + order.
+
+Scheduler- Reads DAG files,Decides when DAG should run
+Webserver- UI to Trigger DAGs Monitor runs Check logs
+worker- Workers actually execute tasks.
+Redis- Redis is used only when using CeleryExecutor.
+Redis acts as a:
+Message broker
+Queue between scheduler and workers.
+Redis does NOT store task results permanently
+It only helps in task communication
+Postgres- stores Airflow metadata, not actual data.
+It stores:
+DAG run history
+Task states (success, failed)
+Users & roles
+Connections & variables
+Logs metadata
+
+Executor	Worker type
+LocalExecutor	Same machine
+CeleryExecutor	Multiple worker pods
+KubernetesExecutor	One pod per task
